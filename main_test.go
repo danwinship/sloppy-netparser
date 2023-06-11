@@ -60,7 +60,8 @@ import "net"
 
 func f() net.Addr {
 	a := &net.IPAddr{ip1}
-	c := net.ParseIP("1.2.3.4")
+	addr := "1.2.3.4"
+	c := net.ParseIP(addr)
 	return &net.TCPAddr{ip5}, nil
 }
 `,
@@ -74,7 +75,8 @@ import (
 
 func f() net.Addr {
 	a := &net.IPAddr{ip1}
-	c := netutils.ParseIPSloppy("1.2.3.4")
+	addr := "1.2.3.4"
+	c := netutils.ParseIPSloppy(addr)
 	return &net.TCPAddr{ip5}, nil
 }
 `,
@@ -87,8 +89,9 @@ import "net"
 
 func f() net.Addr {
 	a := &net.IPAddr{ip1}
-	c := net.ParseIP("1.2.3.4")
-	d, _, err := net.ParseCIDR("1.2.3.4")
+	addr := "1.2.3.4"
+	c := net.ParseIP(addr)
+	d, _, err := net.ParseCIDR(addr)
 	return &net.TCPAddr{ip5}, nil
 }
 `,
@@ -102,8 +105,9 @@ import (
 
 func f() net.Addr {
 	a := &net.IPAddr{ip1}
-	c := netutils.ParseIPSloppy("1.2.3.4")
-	d, _, err := netutils.ParseCIDRSloppy("1.2.3.4")
+	addr := "1.2.3.4"
+	c := netutils.ParseIPSloppy(addr)
+	d, _, err := netutils.ParseCIDRSloppy(addr)
 	return &net.TCPAddr{ip5}, nil
 }
 `,
@@ -115,8 +119,9 @@ func f() net.Addr {
 import "net"
 
 func f() {
-	c := net.ParseIP("1.2.3.4")
-	d, _, err := net.ParseCIDR("1.2.3.4")
+	addr := "1.2.3.4"
+	c := net.ParseIP(addr)
+	d, _, err := net.ParseCIDR(addr)
 }
 `,
 		Out: `package main
@@ -126,8 +131,9 @@ import (
 )
 
 func f() {
-	c := netutils.ParseIPSloppy("1.2.3.4")
-	d, _, err := netutils.ParseCIDRSloppy("1.2.3.4")
+	addr := "1.2.3.4"
+	c := netutils.ParseIPSloppy(addr)
+	d, _, err := netutils.ParseCIDRSloppy(addr)
 }
 `,
 	},
@@ -142,8 +148,9 @@ import (
 )
 
 func f() {
-	c := net.ParseIP("1.2.3.4")
-	d, _, err := net.ParseCIDR("1.2.3.4")
+	addr := "1.2.3.4"
+	c := net.ParseIP(addr)
+	d, _, err := net.ParseCIDR(addr)
 	utilnet.IsIPv6(d)
 }
 `,
@@ -154,9 +161,95 @@ import (
 )
 
 func f() {
-	c := netutils.ParseIPSloppy("1.2.3.4")
-	d, _, err := netutils.ParseCIDRSloppy("1.2.3.4")
+	addr := "1.2.3.4"
+	c := netutils.ParseIPSloppy(addr)
+	d, _, err := netutils.ParseCIDRSloppy(addr)
 	netutils.IsIPv6(d)
+}
+`,
+	},
+	{
+		Name: "no change when parsing constant string",
+		In: `package main
+
+import "net"
+
+func f() net.Addr {
+	a := &net.IPAddr{ip1}
+	c := net.ParseIP("1.2.3.4")
+	return &net.TCPAddr{ip5}, nil
+}
+`,
+		Out: `package main
+
+import "net"
+
+func f() net.Addr {
+	a := &net.IPAddr{ip1}
+	c := net.ParseIP("1.2.3.4")
+	return &net.TCPAddr{ip5}, nil
+}
+`,
+	},
+	{
+		Name: "rewrite constant string ParseIPSloppy to ParseIP",
+		In: `package main
+
+import (
+	"net"
+
+	netutils "k8s.io/utils/net"
+)
+
+func f() net.Addr {
+	a := &net.IPAddr{ip1}
+	c := netutils.ParseIPSloppy("1.2.3.4")
+	return &net.TCPAddr{ip5}, nil
+}
+`,
+		Out: `package main
+
+import (
+	"net"
+)
+
+func f() net.Addr {
+	a := &net.IPAddr{ip1}
+	c := net.ParseIP("1.2.3.4")
+	return &net.TCPAddr{ip5}, nil
+}
+`,
+	},
+	{
+		Name: "already correctly uses ParseIPSloppy",
+		In: `package main
+
+import (
+	"net"
+
+	netutils "k8s.io/utils/net"
+)
+
+func f() net.Addr {
+	a := &net.IPAddr{ip1}
+	addr := "1.2.3.4"
+	c := netutils.ParseIPSloppy(addr)
+	return &net.TCPAddr{ip5}, nil
+}
+`,
+		Out: `package main
+
+import (
+	"net"
+
+	netutils "k8s.io/utils/net"
+)
+
+func f() net.Addr {
+	a := &net.IPAddr{ip1}
+	addr := "1.2.3.4"
+	c := netutils.ParseIPSloppy(addr)
+	return &net.TCPAddr{ip5}, nil
 }
 `,
 	},
