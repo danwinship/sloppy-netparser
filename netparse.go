@@ -5,7 +5,7 @@ import (
 	"go/token"
 )
 
-func sloppyParsers(f *ast.File) bool {
+func sloppyParsers(f *ast.File, preferNonSloppy bool) bool {
 	if ok, _ := getImport(f, "net"); !ok {
 		return false
 	}
@@ -17,10 +17,12 @@ func sloppyParsers(f *ast.File) bool {
 			return
 		}
 
-		wantNonSloppy := false
+		wantNonSloppy := preferNonSloppy
 		if len(ce.Args) == 1 {
 			if bl, ok := ce.Args[0].(*ast.BasicLit); ok {
-				wantNonSloppy = bl.Kind == token.STRING
+				if bl.Kind == token.STRING {
+					wantNonSloppy = true
+				}
 			}
 		}
 

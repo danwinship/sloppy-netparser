@@ -29,12 +29,13 @@ var (
 )
 
 var doDiff = flag.Bool("diff", false, "display diffs instead of rewriting files")
+var preferNonSloppy = flag.Bool("prefer-non-sloppy", false, "rewrite to use standard functions rather than sloppy")
 
 // enable for debugging fix failures
 const debug = false // display incorrectly reformatted source and exit
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "usage: sloppy-netparser [-diff] [path ...]\n")
+	fmt.Fprintf(os.Stderr, "usage: sloppy-netparser [--diff] [--prefer-non-sloppy][path ...]\n")
 	flag.PrintDefaults()
 	os.Exit(2)
 }
@@ -123,7 +124,7 @@ func processFile(filename string, useStdin bool) error {
 	newFile := file
 	fixed := false
 
-	if sloppyParsers(newFile) {
+	if sloppyParsers(newFile, *preferNonSloppy) {
 		fixed = true
 		fmt.Fprintf(&fixlog, " %s", "sloppy-netparsers")
 
