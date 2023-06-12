@@ -60,7 +60,7 @@ import "net"
 
 func f() net.Addr {
 	a := &net.IPAddr{ip1}
-	c := net.ParseIP("ads")
+	c := net.ParseIP("1.2.3.4")
 	return &net.TCPAddr{ip5}, nil
 }
 `,
@@ -74,7 +74,7 @@ import (
 
 func f() net.Addr {
 	a := &net.IPAddr{ip1}
-	c := netutils.ParseIPSloppy("ads")
+	c := netutils.ParseIPSloppy("1.2.3.4")
 	return &net.TCPAddr{ip5}, nil
 }
 `,
@@ -87,8 +87,8 @@ import "net"
 
 func f() net.Addr {
 	a := &net.IPAddr{ip1}
-	c := net.ParseIP("ads")
-	d, _, err := net.ParseCIDR("ads")
+	c := net.ParseIP("1.2.3.4")
+	d, _, err := net.ParseCIDR("1.2.3.4")
 	return &net.TCPAddr{ip5}, nil
 }
 `,
@@ -102,8 +102,8 @@ import (
 
 func f() net.Addr {
 	a := &net.IPAddr{ip1}
-	c := netutils.ParseIPSloppy("ads")
-	d, _, err := netutils.ParseCIDRSloppy("ads")
+	c := netutils.ParseIPSloppy("1.2.3.4")
+	d, _, err := netutils.ParseCIDRSloppy("1.2.3.4")
 	return &net.TCPAddr{ip5}, nil
 }
 `,
@@ -115,8 +115,8 @@ func f() net.Addr {
 import "net"
 
 func f() {
-	c := net.ParseIP("ads")
-	d, _, err := net.ParseCIDR("ads")
+	c := net.ParseIP("1.2.3.4")
+	d, _, err := net.ParseCIDR("1.2.3.4")
 }
 `,
 		Out: `package main
@@ -126,8 +126,8 @@ import (
 )
 
 func f() {
-	c := netutils.ParseIPSloppy("ads")
-	d, _, err := netutils.ParseCIDRSloppy("ads")
+	c := netutils.ParseIPSloppy("1.2.3.4")
+	d, _, err := netutils.ParseCIDRSloppy("1.2.3.4")
 }
 `,
 	},
@@ -142,8 +142,8 @@ import (
 )
 
 func f() {
-	c := net.ParseIP("ads")
-	d, _, err := net.ParseCIDR("ads")
+	c := net.ParseIP("1.2.3.4")
+	d, _, err := net.ParseCIDR("1.2.3.4")
 	utilnet.IsIPv6(d)
 }
 `,
@@ -154,8 +154,8 @@ import (
 )
 
 func f() {
-	c := netutils.ParseIPSloppy("ads")
-	d, _, err := netutils.ParseCIDRSloppy("ads")
+	c := netutils.ParseIPSloppy("1.2.3.4")
+	d, _, err := netutils.ParseCIDRSloppy("1.2.3.4")
 	netutils.IsIPv6(d)
 }
 `,
